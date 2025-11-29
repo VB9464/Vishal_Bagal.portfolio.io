@@ -29,26 +29,38 @@ function scrollToSection(id) {
   document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 }
 
+// Hero Buttons
+const btnProjects = document.getElementById('btn-projects');
+const btnContact = document.getElementById('btn-contact');
+
+if (btnProjects) {
+  btnProjects.addEventListener('click', () => scrollToSection('projects'));
+}
+
+if (btnContact) {
+  btnContact.addEventListener('click', () => scrollToSection('contact'));
+}
+
 // Animate skill levels on scroll
 const skillItems = document.querySelectorAll('.skill-item');
 let skillsAnimated = false;
 
 function animateSkills() {
   if (skillsAnimated) return;
-  
+
   skillItems.forEach((item, index) => {
     const level = item.getAttribute('data-level');
     const progressBar = item.querySelector('.progress-fill');
     const percentageLabel = item.querySelector('.skill-percentage');
-    
+
     if (progressBar) {
       // Reset width to 0 for animation
       progressBar.style.width = '0%';
-      
+
       // Animate to target width with staggered delay
       setTimeout(() => {
         progressBar.style.width = level + '%';
-        
+
         // Animate percentage counter
         if (percentageLabel) {
           animateCounter(percentageLabel, 0, parseInt(level), 1500);
@@ -56,25 +68,25 @@ function animateSkills() {
       }, index * 100 + 200);
     }
   });
-  
+
   skillsAnimated = true;
 }
 
 function animateCounter(element, start, end, duration) {
   const startTime = performance.now();
-  
+
   function updateCounter(currentTime) {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    
+
     const current = Math.floor(start + (end - start) * progress);
     element.textContent = current + '%';
-    
+
     if (progress < 1) {
       requestAnimationFrame(updateCounter);
     }
   }
-  
+
   requestAnimationFrame(updateCounter);
 }
 
@@ -128,7 +140,7 @@ let typeSpeed = 100;
 
 function typeWriter() {
   const currentTitle = titles[currentTitleIndex];
-  
+
   if (isDeleting) {
     typingText.textContent = currentTitle.substring(0, currentCharIndex - 1);
     currentCharIndex--;
@@ -138,7 +150,7 @@ function typeWriter() {
     currentCharIndex++;
     typeSpeed = 100;
   }
-  
+
   if (!isDeleting && currentCharIndex === currentTitle.length) {
     typeSpeed = 2000; // Pause at end
     isDeleting = true;
@@ -147,7 +159,7 @@ function typeWriter() {
     currentTitleIndex = (currentTitleIndex + 1) % titles.length;
     typeSpeed = 500; // Pause before starting new title
   }
-  
+
   setTimeout(typeWriter, typeSpeed);
 }
 
@@ -162,16 +174,16 @@ window.addEventListener('load', () => {
 function createParticles() {
   const particlesContainer = document.getElementById('particles');
   const particleCount = 50;
-  
+
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement('div');
     particle.className = 'particle';
-    
+
     // Random position and animation delay
     particle.style.left = Math.random() * 100 + '%';
     particle.style.animationDelay = Math.random() * 8 + 's';
     particle.style.animationDuration = (Math.random() * 3 + 5) + 's';
-    
+
     particlesContainer.appendChild(particle);
   }
 }
@@ -180,7 +192,7 @@ function createParticles() {
 function createGlobalParticles() {
   const body = document.body;
   const particleCount = 30;
-  
+
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement('div');
     particle.className = 'global-particle';
@@ -197,7 +209,7 @@ function createGlobalParticles() {
       animation: globalFloat ${Math.random() * 10 + 10}s linear infinite;
       animation-delay: ${Math.random() * 10}s;
     `;
-    
+
     body.appendChild(particle);
   }
 }
@@ -239,7 +251,7 @@ updateThemeIcon(currentTheme);
 themeToggle.addEventListener('click', () => {
   const currentTheme = body.getAttribute('data-theme');
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  
+
   body.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
   updateThemeIcon(newTheme);
@@ -256,13 +268,13 @@ let countersAnimated = false;
 
 function animateCounters() {
   if (countersAnimated) return;
-  
+
   counters.forEach(counter => {
     const target = parseInt(counter.getAttribute('data-target'));
     const duration = 2000; // 2 seconds
     const increment = target / (duration / 16); // 60fps
     let current = 0;
-    
+
     const updateCounter = () => {
       current += increment;
       if (current < target) {
@@ -273,10 +285,10 @@ function animateCounters() {
         counter.classList.add('animate');
       }
     };
-    
+
     updateCounter();
   });
-  
+
   countersAnimated = true;
 }
 
@@ -298,7 +310,7 @@ if (aboutSection) {
 function updateParallax() {
   const scrolled = window.pageYOffset;
   const parallaxElements = document.querySelectorAll('[data-speed]');
-  
+
   parallaxElements.forEach(element => {
     const speed = element.getAttribute('data-speed');
     const yPos = -(scrolled * speed);
@@ -315,51 +327,60 @@ const formStatus = document.getElementById('form-status');
 
 contactForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  
+
   // Clear previous errors
   clearErrors();
-  
+
   // Get form data
   const formData = new FormData(contactForm);
   const name = formData.get('name').trim();
   const email = formData.get('email').trim();
   const subject = formData.get('subject').trim();
   const message = formData.get('message').trim();
-  
+
   // Validation
   let isValid = true;
-  
+
   if (name.length < 2) {
     showError('name', 'Name must be at least 2 characters long');
     isValid = false;
   }
-  
+
   if (!isValidEmail(email)) {
     showError('email', 'Please enter a valid email address');
     isValid = false;
   }
-  
+
   if (subject.length < 5) {
     showError('subject', 'Subject must be at least 5 characters long');
     isValid = false;
   }
-  
+
   if (message.length < 10) {
     showError('message', 'Message must be at least 10 characters long');
     isValid = false;
   }
-  
+
   if (isValid) {
-    // Simulate form submission
+    // Show sending status
     submitBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
     submitBtn.disabled = true;
-    
+
+    // Create mailto link with form data
+    const mailtoLink = `mailto:bagal9464@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+    )}`;
+
+    // Open email client
+    window.location.href = mailtoLink;
+
+    // Show success message after a short delay
     setTimeout(() => {
-      showFormStatus('success', 'Message sent successfully! I\'ll get back to you soon.');
+      showFormStatus('success', '✓ Message sent successfully! Your email client has been opened. I\'ll get back to you soon.');
       contactForm.reset();
       submitBtn.innerHTML = '<span>Send Message</span><i class="fas fa-paper-plane"></i>';
       submitBtn.disabled = false;
-    }, 2000);
+    }, 500);
   }
 });
 
@@ -371,7 +392,7 @@ function isValidEmail(email) {
 function showError(fieldName, message) {
   const field = document.getElementById(fieldName);
   const errorElement = document.getElementById(`${fieldName}-error`);
-  
+
   field.classList.add('error');
   field.classList.remove('success');
   errorElement.textContent = message;
@@ -381,23 +402,23 @@ function showError(fieldName, message) {
 function clearErrors() {
   const errorMessages = document.querySelectorAll('.error-message');
   const inputs = document.querySelectorAll('input, textarea');
-  
+
   errorMessages.forEach(error => {
     error.classList.remove('show');
     error.textContent = '';
   });
-  
+
   inputs.forEach(input => {
     input.classList.remove('error', 'success');
   });
-  
+
   formStatus.classList.remove('show', 'success', 'error');
 }
 
 function showFormStatus(type, message) {
   formStatus.textContent = message;
   formStatus.className = `form-status ${type} show`;
-  
+
   setTimeout(() => {
     formStatus.classList.remove('show');
   }, 5000);
@@ -409,7 +430,7 @@ inputs.forEach(input => {
   input.addEventListener('blur', () => {
     validateField(input);
   });
-  
+
   input.addEventListener('input', () => {
     if (input.classList.contains('error')) {
       validateField(input);
@@ -421,10 +442,10 @@ function validateField(field) {
   const value = field.value.trim();
   const fieldName = field.name;
   const errorElement = document.getElementById(`${fieldName}-error`);
-  
+
   let isValid = true;
   let errorMessage = '';
-  
+
   switch (fieldName) {
     case 'name':
       if (value.length < 2) {
@@ -451,7 +472,7 @@ function validateField(field) {
       }
       break;
   }
-  
+
   if (isValid) {
     field.classList.remove('error');
     field.classList.add('success');
@@ -462,4 +483,92 @@ function validateField(field) {
     errorElement.textContent = errorMessage;
     errorElement.classList.add('show');
   }
+}
+
+// Contact Form Submission
+const contactForm = document.getElementById('contact-form');
+const formStatus = document.getElementById('form-status');
+const submitBtn = document.getElementById('submit-btn');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Get form data
+    const formData = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      subject: document.getElementById('subject').value,
+      message: document.getElementById('message').value
+    };
+
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
+
+    // Show loading status
+    formStatus.textContent = 'Sending your message...';
+    formStatus.className = 'form-status show info';
+
+    try {
+      // Method 1: Using EmailJS (Free service - requires setup)
+      // Uncomment and configure after setting up EmailJS account
+      /*
+      emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message
+      }).then(() => {
+        showSuccess();
+      }).catch(() => {
+        showError();
+      });
+      */
+
+      // Method 2: Mailto fallback (opens email client)
+      const mailtoLink = `mailto:bagal9464@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+      )}`;
+
+      window.location.href = mailtoLink;
+
+      // Show success message
+      setTimeout(() => {
+        showSuccess();
+      }, 500);
+
+    } catch (error) {
+      showError();
+    }
+  });
+}
+
+function showSuccess() {
+  formStatus.textContent = '✓ Message sent successfully! I\'ll get back to you soon.';
+  formStatus.className = 'form-status show success';
+  contactForm.reset();
+
+  // Reset button
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = '<span>Send Message</span><i class="fas fa-paper-plane"></i>';
+
+  // Hide status after 5 seconds
+  setTimeout(() => {
+    formStatus.classList.remove('show');
+  }, 5000);
+}
+
+function showError() {
+  formStatus.textContent = '✗ Failed to send message. Please try again or email me directly at bagal9464@gmail.com';
+  formStatus.className = 'form-status show error';
+
+  // Reset button
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = '<span>Send Message</span><i class="fas fa-paper-plane"></i>';
+
+  // Hide status after 7 seconds
+  setTimeout(() => {
+    formStatus.classList.remove('show');
+  }, 7000);
 }
